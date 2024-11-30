@@ -1,55 +1,128 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/router'; // Import useRouter
+import styles from '../../styles/RegisterForm.module.css';
+import Link from 'next/link';
+
 
 export default function Register() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const router = useRouter(); // Initialize useRouter
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post('http://localhost:3001/utilisateurs/register', { username, password });
-            setMessage('Registration successful. You can now log in.');
-            setUsername('');
-            setPassword('');
-        } catch (err) {
-            setMessage(err.response?.data?.error || 'An error occurred.');
-        }
-    };
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-    return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-            <div className="bg-white shadow-lg rounded-lg p-6 w-96">
-                <h1 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Register</h1>
-                <form onSubmit={handleRegister} className="space-y-4">
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900"
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900"
-                    />
-                    <button
-                        type="submit"
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition duration-300"
-                    >
-                        Register
-                    </button>
-                </form>
-                {message && (
-                    <p className={`mt-4 text-center font-medium ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}>
-                        {message}
-                    </p>
-                )}
-            </div>
+    try {
+      const res = await axios.post('http://localhost:3001/utilisateurs/register', {
+        email,
+        username,
+        password,
+      });
+
+      setMessage('Registration successful. Redirecting to login...');
+      setEmail('');
+      setUsername('');
+      setPassword('');
+
+      // Redirect to the login page
+      setTimeout(() => {
+        router.push('/auth/login'); // Redirect after a short delay
+      }, 1000); // 2-second delay for user feedback
+    } catch (err) {
+      setMessage(err.response?.data?.error || 'An error occurred.');
+    }
+  };
+
+  return (
+    <>
+    {/* Header */}
+    <header className={styles.header}>
+      <Link href="/" className={styles.homeLink}>
+        HomePage
+        <span className={styles.arrowIcon}></span>
+      </Link>
+    </header>
+    <div className={styles.container}>
+      {/* Left Section */}
+      <div className={styles.leftSection}>
+        
+        <div>
+          {/* Header Section */}
+      <header className={styles.header}>
+      <div className={styles.logo}></div>
+      <h1 className={styles.mainesText}>DAUPHINEPLANNER</h1> 
+    </header>
+          <p className={styles.mainText}>
+            Let’s Start this journey Together <br /> <span>-With Us-</span>
+          </p>
         </div>
-    );
+      </div>
+
+      {/* Right Section */}
+      <div className={styles.rightSection}>
+        <h1 className={styles.title}>Sign Up</h1>
+        <form className={styles.form} onSubmit={handleRegister}>
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={username}
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              placeholder="E-Mail"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.checkboxGroup}>
+            <input type="checkbox" id="terms" required />
+            <label htmlFor="terms">
+              I agree to the statement in <a href="#">Terms & Conditions</a>
+            </label>
+          </div>
+          <button type="submit" className={styles.submitButton}>Sign Up</button>
+        </form>
+        {message && (
+          <p
+            className={`${styles.message} ${
+              message.includes('successful') ? styles.success : styles.error
+            }`}
+          >
+            {message}
+          </p>
+        )}
+        <p className={styles.signInPrompt}>
+          Already have an account? <a href="/auth/login">Login</a>
+        </p>
+      </div>
+    </div>
+    </>
+  );
 }

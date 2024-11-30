@@ -1,0 +1,131 @@
+/* General Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: url('pici.webp') no-repeat center center;
+    background-size: cover;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  /* Header Section */
+/* Header */
+.header {
+  display: flex;
+  align-items: center; /* Vertically aligns logo and text */
+  justify-content: flex-start; /* Ensures logo and text are aligned to the left */
+  padding: 10px 20px; /* Add some spacing */
+  position: fixed; /* Fixes the header to the top */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensure it spans the full width */
+  z-index: 1000; /* Keep it on top of other elements */
+}
+
+/* Logo */
+.logo {
+  width: 50px;
+  height: 50px;
+  background: url('enee.jpg') no-repeat center center;
+  background-size: contain; /* Ensure the image fits */
+  margin-right: 15px; /* Space between the logo and text */
+}
+
+/* Main Text */
+.mainText {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #6253be;
+  font-family: 'Montserrat', sans-serif; /* Use Montserrat font */
+  text-transform: uppercase; /* Makes the text uppercase */
+}
+
+  
+  /* Main Content Section */
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .title {
+    font-size: 3.3rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #6253be;
+    font-family: 'Montserrat', sans-serif;
+margin-top: 60px;
+
+  }
+  
+  .subtitle {
+    font-size: 3.6rem;
+    font-weight: bold;
+    color: #6253be;
+    margin-bottom: 50px;
+    font-family: 'Montserrat', sans-serif;
+
+  }
+  
+  .quote {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    font-family: 'Montserrat', sans-serif;
+    color: #a40999;
+    margin-bottom: 30px;
+    font-weight: bold;
+
+  }
+  
+  /* Buttons */
+  .registerButton {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #6253be;
+    border: 5px solid #6253be;
+    background: transparent;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .registerButton:hover {
+    background: #6253be;
+    color: white;
+  }
+  
+  .loginPrompt {
+    margin-top: 20px;
+    font-size: 1rem;
+    font-family: 'Lora', serif;  
+    color: #6253be;
+}
+  
+  .loginPrompt a {
+    color: #a40999;
+    font-weight: bold;
+    text-decoration: none;
+
+
+
+  }
+  
+  .loginPrompt a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Footer */
+  .footer {
+    font-family: 'Lora', serif;
+    margin-top: 70px;
+    font-size: 0.9rem;
+    color: #6253be;
+    font-weight: bold;
+
+
+  }
+  

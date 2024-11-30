@@ -1,0 +1,239 @@
+/* General Container */
+.container {
+  display: flex;
+  max-width: 1200px;
+  margin: 50px auto;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Left Section */
+
+/* Left Section */
+.leftSection {
+  flex: 1;
+  position: relative;
+  background: url('planee.jpg') ;
+  background-size: cover;
+  color: #6253be;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  
+}
+
+.leftSection p {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 4rem;
+  font-weight: bold;
+  color: #6253be;
+  line-height: 1.5;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+
+
+.footerText {
+  position: absolute;
+  bottom: 20px;
+  font-size: 1.5rem;
+  color: #6253be;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+    
+}
+
+
+.decorativeImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Right Section */
+.rightSection {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #6253be;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+
+}
+
+/* Form */
+.form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  color: black;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(255, 111, 97, 0.3);
+}
+
+/* Checkbox */
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+
+}
+
+.checkboxGroup label a {
+  color: #6253be;
+  text-decoration: underline;
+}
+
+/* Button */
+.submitButton {
+  padding: 12px;
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(to right,#6253be
+  , #ff9a8b);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background: linear-gradient(to right, #6253be
+  , #ff6f61);
+  transform: scale(1.05);
+}
+
+/* Messages */
+.message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.success {
+  color: #28a745;
+}
+
+.error {
+  color: #dc3545;
+}
+
+/* Sign-In Prompt */
+.signInPrompt {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.signInPrompt a {
+  color: #6253be;
+      font-weight: bold;
+  text-decoration: none;
+}
+
+.signInPrompt a:hover {
+  text-decoration: underline;
+}
+/* Header Content */
+.header {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  gap: 10px; /* Space between the logo and text */
+  position: absolute; /* Place it inside the container */
+  top: 10px; /* Add margin from the top */
+  right: 20px; /* Add margin from the left */
+  z-index: 10; 
+  font-size: 2rem;
+  position: absolute;
+  right: 240px;/* Ensure it stays above the form */
+}
+.homeLink {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between arrow and text */
+  font-size: 1.2rem;
+  color: #6253be;
+  font-family: 'Times New Roman', Times, serif;
+  margin-top: 40px; 
+  position: absolute; /* Position relative to the container */
+  left: 100px;
+}
+
+.homeLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  padding: 4px 8px;
+}
+
+/* Arrow Icon */
+.arrowIcon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: solid #6253be;
+  border-width: 2px 2px 0 0;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+}
+
+.homeLink:hover .arrowIcon {
+  transform: rotate(45deg) translateX(2px);
+}
+
+/* Header Alignment */
+
+/* Logo */
+.logo {
+  width: 50px;
+  height: 50px;
+  background: url('enee.jpg') no-repeat ;
+  background-size: contain; 
+}
+
+/* Main Text */
+.mainesText {
+  font-size: 1.8rem; /* Adjust size for visibility */
+  font-weight: bold;
+  color: #6253be;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase; /* Make text uppercase */
+}

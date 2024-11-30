@@ -1,0 +1,201 @@
+/* Page Wrapper */
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url('pici.webp') no-repeat center center;
+  background-size: cover;
+}
+
+/* Main Container */
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 90%; /* Increased width for a larger container */
+  max-width: 1400px; /* Increased maximum width */
+  height: 80%; /* Added height for more vertical space */
+  background: white;
+  border-radius: 20px; /* Slightly larger border radius */
+  box-shadow: 0px 6px 30px rgba(0, 0, 0, 0.15); /* Softer shadow */
+  overflow: hidden;
+  margin-top: 80px;
+}
+
+
+
+.leftSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  padding: 5px;
+  background: url("kkkk-modified.png") no-repeat;
+  background-size: contain; 
+  margin-left: 80px;
+}
+
+
+
+.footerText {
+  font-size: 1rem; 
+  color: #6253be;
+  margin-top: 420px;
+  text-align: center;
+  font-weight: bold;
+  font-family: 'Lora', serif;
+
+}
+
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  
+}
+
+.title {
+  font-size: 2.5rem; 
+  font-weight: bold;
+  color: #6253be;
+  margin-bottom: 30px; 
+  font-family: 'Times New Roman', Times, serif;
+
+}
+
+.form {
+  width: 100%;
+  max-width: 400px; 
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 20px; 
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px; 
+  background-color: #f9f9f9;
+}
+
+.input:focus {
+  border-color: #6a0dad;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(106, 13, 173, 0.3);
+}
+
+.submitButton {
+  padding: 12px;
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(to right,#6253be
+    , #ff9a8b);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background: linear-gradient(to right,#6253be
+  , #ff9a8b);  transform: scale(1.08); 
+}
+
+.signUpPrompt {
+  margin-top: 20px;
+  font-size: 1.1rem; 
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+
+}
+
+.signUpPrompt a {
+  color: #6253be;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.signUpPrompt a:hover {
+  text-decoration: underline;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Home Link */
+.homeLink {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between arrow and text */
+  font-size: 1.3rem;
+  color: #6253be;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-family: 'Times New Roman', Times, serif;
+  position: absolute; /* Position relative to the container */
+  bottom: 20px; /* Distance from the bottom of the container */
+  right: 20px;
+
+  
+
+}
+
+.homeLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Arrow Icon */
+.arrowIcon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: solid #6253be;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-top: 2px; /* Align with text */
+    transform: rotate(-50deg) translateX(-1px);
+    right: 140px; /* Slight hover animation to left */
+}
+
+.homeLink:hover .arrowIcon {
+  transform: rotate(-50deg) translateX(-2px); /* Slight hover animation to left */
+}
+
+/* Logo */
+.logo {
+  width: 50px;
+  height: 50px;
+  background: url('enee.jpg') no-repeat ;
+  background-size: contain;
+}
+
+.mainText {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color:#6253be;
+  font-family: 'Montserrat', sans-serif;
+  margin-right: 500px;
+  text-transform: uppercase;
+}
+
