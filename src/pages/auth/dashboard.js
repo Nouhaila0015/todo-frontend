@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, Sun, Calendar, ChevronRight, Folder, Trash2, Edit, X, Plus, Star, LogOut } from 'lucide-react';
 import axios from 'axios';
 import TaskList from '../../components/TaskList';
+import NotificationBell from '@/components/NotificationBell';
 
 export default function Dashboard() {
     const [user, setUser] = useState(null);
@@ -335,6 +336,12 @@ export default function Dashboard() {
       <div className="w-72 bg-gray-100 border-r">
           {/* Header du Sidebar */}
           <div className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                    <NotificationBell />
+                    <button onClick={handleLogout}>
+                        <LogOut size={20} />
+                    </button>
+            </div>
               <div className="flex items-center gap-2">
                   <button className="p-2 hover:bg-gray-200 rounded">
                       <Menu size={20} className="text-gray-700" />
