@@ -5,6 +5,7 @@ import TaskList from '../../components/TaskList';
 import NotificationBell from '@/components/NotificationBell';
 import ProjectInvite from '@/components/ProjectInvite';
 import { io } from 'socket.io-client';
+import styles from '@/styles/AuthHome.module.css';
 
 export default function Dashboard() {
     const [socket, setSocket] = useState(null);
@@ -400,189 +401,205 @@ export default function Dashboard() {
     if (!user) return <div className="p-4 text-gray-700">Please log in to continue.</div>;
 
     return (
-        <div className="flex h-screen bg-gray-50">
-            <div className="w-72 bg-gray-100 border-r">
-                <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-gray-200 rounded">
-                            <Menu size={20} className="text-gray-700" />
-                        </button>
-                        <span className="font-medium text-gray-800">{user.username}</span>
+        <div className="flex h-screen bg-gradient-to-br from-purple-50 to-blue-100">
+            {/* Sidebar */}
+            <div className="w-80 bg-white p-6 flex flex-col h-full">
+                {/* Logo et titre */}
+                <div className="flex items-center gap-3 mb-8">
+                <div className={styles.logo}></div>
+                <h1 className="text-xl font-bold text-purple-600">DAUPHINEPLANNER</h1>
+            </div>
+    
+                {/* User Info */}
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center">
+                        <span className="text-lg font-medium text-purple-700">
+                            U
+                        </span>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <NotificationBell />
-                        <button 
-                            onClick={handleLogout}
-                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-gray-200 rounded transition-colors"
-                            title="Déconnexion"
-                        >
-                            <LogOut size={20} />
-                        </button>
+                    <div className="flex-1">
+                        <div className="text-sm text-gray-900 font-medium">Hello {user.username}</div>
+                        <div className="text-xs text-gray-800">{user.email}</div>
                     </div>
+                    <NotificationBell />
                 </div>
     
-                <form onSubmit={handleAddProject} className="px-4 mb-4">
-                    <div className="flex gap-2">
+                {/* Nouveau projet */}
+                <div className="mb-6">
+                    <div className="relative">
                         <input
                             type="text"
                             placeholder="Nouveau projet"
                             value={newProject.titre}
                             onChange={(e) => setNewProject({ titre: e.target.value })}
-                            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
+                            className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
                         />
                         <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            type="button"  // Ajoutez type="button"
+                            onClick={(e) => handleAddProject(e)}  // Passez l'événement
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
                         >
-                            <Plus size={20} />
+                            <Plus size={16} />
                         </button>
                     </div>
-                </form>
+                </div>
     
-                <nav className="px-2 space-y-1">
+                {/* Navigation des projets */}
+                <nav className="space-y-1 flex-1 overflow-y-auto">
                     {projects.map((project) => (
-                        <div key={project.id_projet} className="flex items-center justify-between p-2 rounded-md hover:bg-gray-200">
-                            {editingProject === project.id_projet ? (
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        updateProject(project.id_projet, e.target.title.value);
-                                    }}
-                                    className="flex-1 flex gap-2"
-                                >
-                                    <input
-                                        name="title"
-                                        defaultValue={project.titre}
-                                        className="flex-1 px-2 py-1 rounded border"
-                                    />
-                                    <button type="submit" className="text-blue-600">
+                        <div
+                            key={project.id_projet}
+                            className={`group flex items-center justify-between p-3 rounded-lg transition-all ${
+                                selectedProject?.id_projet === project.id_projet
+                                    ? 'bg-purple-100'
+                                    : 'hover:bg-gray-50'
+                            }`}
+                        >
+                            <button
+                                onClick={() => {
+                                    setSelectedProject(project);
+                                    fetchTasks(project.id_projet);
+                                }}
+                                className="flex items-center gap-3 text-gray-700 flex-1"
+                            >
+                                {project.titre === "Ma journée" ? (
+                                    <Sun size={18} className="text-purple-600" />
+                                ) : project.titre === "Important" ? (
+                                    <Star size={18} className="text-purple-600" />
+                                ) : project.titre === "Deadline" ? (
+                                    <Calendar size={18} className="text-purple-600" />
+                                ) : (
+                                    <Folder size={18} className="text-purple-600" />
+                                )}
+                                <span>{project.titre}</span>
+                            </button>
+                            {!["Ma journée", "Important", "Deadline"].includes(project.titre) && (
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                                    <button
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="p-1 text-gray-400 hover:text-purple-600"
+                                    >
+                                        <Plus size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => setEditingProject(project.id_projet)}
+                                        className="p-1 text-gray-400 hover:text-purple-600"
+                                    >
                                         <Edit size={16} />
                                     </button>
-                                    <button type="button" onClick={() => setEditingProject(null)}>
-                                        <X size={16} />
-                                    </button>
-                                </form>
-                            ) : (
-                                <>
                                     <button
-                                        onClick={() => {
-                                            setSelectedProject(project);
-                                            fetchTasks(project.id_projet);
-                                        }}
-                                        className={`flex items-center gap-3 ${
-                                            selectedProject?.id_projet === project.id_projet ? 'text-blue-700' : 'text-gray-700'
-                                        }`}
+                                        onClick={() => deleteProject(project.id_projet)}
+                                        className="p-1 text-gray-400 hover:text-red-600"
                                     >
-                                        <Folder size={16} />
-                                        <span>{project.titre}</span>
+                                        <Trash2 size={16} />
                                     </button>
-                                    <div className="flex gap-2">
-                                        <ProjectInvite projectId={project.id_projet} />
-                                        <button
-                                            onClick={() => setEditingProject(project.id_projet)}
-                                            className="text-gray-500 hover:text-blue-600"
-                                        >
-                                            <Edit size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => deleteProject(project.id_projet)}
-                                            className="text-gray-500 hover:text-red-600"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                </>
+                                </div>
                             )}
                         </div>
                     ))}
                 </nav>
+    
+                {/* Déconnexion */}
+                <button
+                    onClick={handleLogout}
+                    className="mt-6 flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                >
+                    <LogOut size={18} />
+                    <span>Déconnexion</span>
+                </button>
             </div>
     
-            <div className="flex-1 flex flex-col">
-                <header className="bg-blue-600 text-white p-6">
-                    <h1 className="text-2xl font-semibold flex items-center gap-3">
-                        {selectedProject ? (
-                            <>
-                                <Folder size={24} />
-                                {selectedProject.titre}
-                            </>
-                        ) : (
-                            <>
-                                <Sun size={24} />
-                                Mes tâches
-                            </>
-                        )}
-                    </h1>
-                    <p className="mt-1 text-blue-50">
-                        {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </p>
-                </header>
+            {/* Main Content */}
+            <div className="flex-1 p-6">
+                <div className="bg-white rounded-lg h-full flex flex-col">
+                    {/* Header */}
+                    <div className="p-6 border-b">
+                        <h1 className="text-2xl font-semibold flex items-center gap-3 text-gray-800">
+                            {selectedProject ? (
+                                <>
+                                    {selectedProject.titre === "Ma journée" ? (
+                                        <Sun size={24} className="text-purple-600" />
+                                    ) : selectedProject.titre === "Important" ? (
+                                        <Star size={24} className="text-purple-600" />
+                                    ) : selectedProject.titre === "Deadline" ? (
+                                        <Calendar size={24} className="text-purple-600" />
+                                    ) : (
+                                        <Folder size={24} className="text-purple-600" />
+                                    )}
+                                    {selectedProject.titre}
+                                </>
+                            ) : (
+                                <>
+                                    <Sun size={24} className="text-purple-600" />
+                                    Ma journée
+                                </>
+                            )}
+                        </h1>
+                        <p className="mt-1 text-gray-500">
+                            {new Date().toLocaleDateString('fr-FR', { 
+                                weekday: 'long',
+                                day: 'numeric',
+                                month: 'long'
+                            })}
+                        </p>
+                    </div>
     
-                <main className="flex-1 p-6">
-                {selectedProject && (
-                  <form onSubmit={handleAddTask} className="flex items-center gap-3 p-3 bg-white rounded-lg shadow mb-4">
-                      <ChevronRight size={20} className="text-gray-400" />
-                      <input
-                          type="text"
-                          placeholder="Titre de la tâche"
-                          value={newTask.titre}
-                          onChange={(e) => setNewTask({ ...newTask, titre: e.target.value })}
-                          className="flex-1 outline-none text-gray-700"
-                          required
-                      />
-                      <input
-                          type="text"
-                          placeholder="Description"
-                          value={newTask.description}
-                          onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                          className="flex-1 outline-none text-gray-700 border-l px-2"
-                          required
-                      />
-                      <input
-                          type="date"
-                          value={newTask.deadline}
-                          onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
-                          className="outline-none text-gray-700 border-l px-2"
-                          required
-                      />
-                      <button
-                          type="submit"
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                          Ajouter
-                      </button>
-                  </form>
-              )}
-
-              <TaskList
-                  tasks={selectedProject ? tasks : todayTasks}
-                  editingTask={editingTask}
-                  setEditingTask={setEditingTask}
-                  updateTask={updateTask}
-                  toggleTaskStatus={toggleTaskStatus}
-                  toggleImportant={toggleImportant}
-                  deleteTask={deleteTask}
-              />
-                </main>
+                    {/* Contenu des tâches */}
+                    <div className="flex-1 p-6 overflow-y-auto">
+                        <form onSubmit={handleAddTask} className="flex items-center gap-3 mb-6">
+                            <input
+                                type="text"
+                                placeholder="Nouvelle tâche"
+                                value={newTask.titre}
+                                onChange={(e) => setNewTask({ ...newTask, titre: e.target.value })}
+                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                                required
+                            />
+                            <input
+                                type="text"
+                                placeholder="Description"
+                                value={newTask.description}
+                                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                            />
+                            <input
+                                type="date"
+                                value={newTask.deadline}
+                                onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
+                                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                            >
+                                Ajouter
+                            </button>
+                        </form>
+    
+                        <TaskList
+                            tasks={selectedProject ? tasks : todayTasks}
+                            editingTask={editingTask}
+                            setEditingTask={setEditingTask}
+                            updateTask={updateTask}
+                            toggleTaskStatus={toggleTaskStatus}
+                            toggleImportant={toggleImportant}
+                            deleteTask={deleteTask}
+                        />
+                    </div>
+                </div>
             </div>
-
-
-
-
-
-
-
-
-
     
             {/* Modal d'invitation */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 w-96">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Inviter un membre</h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+                            <h3 className="text-lg font-semibold text-gray-900">Inviter un membre</h3>
+                            <button 
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-gray-400 hover:text-gray-600"
+                            >
                                 <X size={20} />
                             </button>
                         </div>
@@ -596,7 +613,7 @@ export default function Dashboard() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
                                     required
                                 />
                             </div>
@@ -608,7 +625,7 @@ export default function Dashboard() {
                                 <select
                                     value={permission}
                                     onChange={(e) => setPermission(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
                                 >
                                     <option value="Viewer">Lecteur</option>
                                     <option value="Editor">Éditeur</option>
@@ -621,7 +638,7 @@ export default function Dashboard() {
     
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                                className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors"
                             >
                                 Inviter
                             </button>
