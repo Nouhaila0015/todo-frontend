@@ -56,6 +56,11 @@ export default function Dashboard() {
 
     
 
+    
+
+
+
+
     useEffect(() => {
         const verifySession = async () => {
             try {
@@ -63,8 +68,19 @@ export default function Dashboard() {
                     withCredentials: true,
                 });
                 setUser(res.data.user);
-                fetchProjects();
-                fetchTodayTasks();
+    
+                const projectsResponse = await axios.get('http://localhost:3001/projets', { withCredentials: true });
+                setProjects(projectsResponse.data);
+    
+                // Trouver le projet "Ma journée" dans les projets récupérés
+                const maJourneeProject = projectsResponse.data.find((project) => project.titre === "Ma journée");
+    
+                if (maJourneeProject) {
+                    setSelectedProject(maJourneeProject); // Sélectionne automatiquement "Ma journée"
+                    fetchTasks(maJourneeProject.id_projet); // Charge les tâches de "Ma journée"
+                } else {
+                    console.warn("Le projet 'Ma journée' n'a pas été trouvé.");
+                }
             } catch (error) {
                 console.error('Auth error:', error);
                 window.location.href = '/auth/login';
@@ -72,7 +88,9 @@ export default function Dashboard() {
         };
         verifySession();
     }, []);
-
+    
+    
+    
     const handleInvite = async (e) => {
         e.preventDefault();
         try {
@@ -211,47 +229,26 @@ export default function Dashboard() {
     const handleAddTask = async (e) => {
         e.preventDefault();
         if (!selectedProject || !newTask.titre) return;
-
+    
         try {
-            const originalTask = await axios.post(
+            // Create the task and let the backend handle "Ma journée" and "Deadline" logic
+            await axios.post(
                 'http://localhost:3001/todos',
                 {
                     ...newTask,
-                    projetId: selectedProject.id_projet,
-                    isToday: false
+                    projetId: selectedProject.id_projet, // Pass the selected project ID
                 },
                 { withCredentials: true }
             );
-
-            const today = new Date();
-            const taskDate = new Date(newTask.deadline);
-            const isToday = taskDate.toDateString() === today.toDateString();
-
-            if (isToday) {
-                const res = await axios.get('http://localhost:3001/projets', { withCredentials: true });
-                const maJourneeProject = res.data.find(p => p.titre === "Ma journée");
-
-                if (maJourneeProject) {
-                    await axios.post(
-                        'http://localhost:3001/todos',
-                        {
-                            ...newTask,
-                            projetId: maJourneeProject.id_projet,
-                            isToday: true
-                        },
-                        { withCredentials: true }
-                    );
-                }
-            }
-
+    
             setNewTask({ titre: '', description: '', deadline: '', id_Status: 1, isImportant: false });
             fetchTasks(selectedProject.id_projet);
-            fetchTodayTasks();
+            fetchTodayTasks(); // Refresh "Ma journée"
         } catch (error) {
             console.error('Error adding task:', error);
         }
     };
-
+    
     const toggleTaskStatus = async (taskId, currentStatus) => {
         try {
             await axios.put(
@@ -272,18 +269,29 @@ export default function Dashboard() {
 
     const toggleImportant = async (taskId, currentImportance) => {
         try {
+            // Fetch task details directly
             const taskResponse = await axios.get(`http://localhost:3001/todos/${taskId}`, { withCredentials: true });
             const task = taskResponse.data;
-
+    
+            // Get the "Important" project details
             const res = await axios.get('http://localhost:3001/projets', { withCredentials: true });
             const importantProject = res.data.find(p => p.titre === "Important");
-            
+    
             if (!importantProject) {
-                console.error('Important project not found');
+                console.error('Projet Important non trouvé');
                 return;
             }
-
-            if (!currentImportance) {
+    
+            // Prevent duplication by checking if the task is already in the "Important" project
+            const importantTasks = await axios.get(`http://localhost:3001/todos/projet/${importantProject.id_projet}`, {
+                withCredentials: true,
+            });
+            const isAlreadyInImportant = importantTasks.data.some(
+                (t) => t.titre === task.titre && t.deadline === task.deadline
+            );
+    
+            if (!currentImportance && !isAlreadyInImportant) {
+                // Add to the "Important" project if not already marked important
                 await axios.post(
                     'http://localhost:3001/todos',
                     {
@@ -292,30 +300,28 @@ export default function Dashboard() {
                         deadline: task.deadline,
                         id_Status: task.id_Status,
                         projetId: importantProject.id_projet,
-                        isImportant: true
+                        isImportant: true,
                     },
                     { withCredentials: true }
                 );
-            } else {
-                const importantTasks = await axios.get(
-                    `http://localhost:3001/todos/projet/${importantProject.id_projet}`,
-                    { withCredentials: true }
-                );
-                const taskToDelete = importantTasks.data.find(t => 
-                    t.titre === task.titre && 
-                    t.description === task.description
+            } else if (currentImportance && isAlreadyInImportant) {
+                // Remove the task from the "Important" project
+                const taskToDelete = importantTasks.data.find(
+                    (t) => t.titre === task.titre && t.deadline === task.deadline
                 );
                 if (taskToDelete) {
                     await axios.delete(`http://localhost:3001/todos/${taskToDelete.id_Tache}`, { withCredentials: true });
                 }
             }
-
+    
+            // Update the original task's `isImportant` status
             await axios.put(
                 `http://localhost:3001/todos/${taskId}`,
                 { isImportant: !currentImportance },
                 { withCredentials: true }
             );
-            
+    
+            // Refresh tasks
             if (selectedProject) {
                 fetchTasks(selectedProject.id_projet);
             }
@@ -324,6 +330,7 @@ export default function Dashboard() {
             console.error('Error toggling importance:', error);
         }
     };
+    
 
     const deleteTask = async (taskId) => {
         try {
@@ -513,18 +520,61 @@ export default function Dashboard() {
                 </header>
     
                 <main className="flex-1 p-6">
-                    {/* Formulaire d'ajout de tâche ... */}
-                    <TaskList
-                        tasks={tasks}
-                        editingTask={editingTask}
-                        setEditingTask={setEditingTask}
-                        updateTask={updateTask}
-                        toggleTaskStatus={toggleTaskStatus}
-                        toggleImportant={toggleImportant}
-                        deleteTask={deleteTask}
-                    />
+                {selectedProject && (
+                  <form onSubmit={handleAddTask} className="flex items-center gap-3 p-3 bg-white rounded-lg shadow mb-4">
+                      <ChevronRight size={20} className="text-gray-400" />
+                      <input
+                          type="text"
+                          placeholder="Titre de la tâche"
+                          value={newTask.titre}
+                          onChange={(e) => setNewTask({ ...newTask, titre: e.target.value })}
+                          className="flex-1 outline-none text-gray-700"
+                          required
+                      />
+                      <input
+                          type="text"
+                          placeholder="Description"
+                          value={newTask.description}
+                          onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                          className="flex-1 outline-none text-gray-700 border-l px-2"
+                          required
+                      />
+                      <input
+                          type="date"
+                          value={newTask.deadline}
+                          onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
+                          className="outline-none text-gray-700 border-l px-2"
+                          required
+                      />
+                      <button
+                          type="submit"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                          Ajouter
+                      </button>
+                  </form>
+              )}
+
+              <TaskList
+                  tasks={selectedProject ? tasks : todayTasks}
+                  editingTask={editingTask}
+                  setEditingTask={setEditingTask}
+                  updateTask={updateTask}
+                  toggleTaskStatus={toggleTaskStatus}
+                  toggleImportant={toggleImportant}
+                  deleteTask={deleteTask}
+              />
                 </main>
             </div>
+
+
+
+
+
+
+
+
+
     
             {/* Modal d'invitation */}
             {isModalOpen && (
