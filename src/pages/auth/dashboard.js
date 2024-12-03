@@ -591,37 +591,39 @@ export default function Dashboard() {
     
                     {/* Contenu des tâches */}
                     <div className="flex-1 p-6 overflow-y-auto">
-                        <form onSubmit={handleAddTask} className="flex items-center gap-3 mb-6">
-                            <input
-                                type="text"
-                                placeholder="Nouvelle tâche"
-                                value={newTask.titre}
-                                onChange={(e) => setNewTask({ ...newTask, titre: e.target.value })}
-                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
-                                required
-                            />
-                            <input
-                                type="text"
-                                placeholder="Description"
-                                value={newTask.description}
-                                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
-                            />
-                            <input
-                                type="date"
-                                value={newTask.deadline}
-                                onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
-                                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
-                                required
-                            />
-                            <button
-                                type="submit"
-                                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                            >
-                                Ajouter
-                            </button>
-                        </form>
-    
+                        {selectedProject?.titre !== "Deadline" && (
+                            <form onSubmit={handleAddTask} className="flex items-center gap-3 mb-6">
+                                <input
+                                    type="text"
+                                    placeholder="Nouvelle tâche"
+                                    value={newTask.titre}
+                                    onChange={(e) => setNewTask({ ...newTask, titre: e.target.value })}
+                                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Description"
+                                    value={newTask.description}
+                                    onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                                />
+                                <input
+                                    type="date"
+                                    value={newTask.deadline}
+                                    onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
+                                    className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                >
+                                    Ajouter
+                                </button>
+                            </form>
+                        )}
+
                         <TaskList
                             tasks={selectedProject ? tasks : todayTasks}
                             editingTask={editingTask}
@@ -632,6 +634,7 @@ export default function Dashboard() {
                             deleteTask={deleteTask}
                         />
                     </div>
+
                 </div>
             </div>
     
