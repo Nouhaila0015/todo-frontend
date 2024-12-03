@@ -209,6 +209,8 @@ export default function Dashboard() {
         }
     };
 
+    
+
     const fetchTodayTasks = async () => {
         try {
             const res = await axios.get('http://localhost:3001/todos/today', { withCredentials: true });
@@ -406,15 +408,15 @@ export default function Dashboard() {
             <div className="w-80 bg-white p-6 flex flex-col h-full">
                 {/* Logo et titre */}
                 <div className="flex items-center gap-3 mb-8">
-                <div className={styles.logo}></div>
-                <h1 className="text-xl font-bold text-purple-600">DAUPHINEPLANNER</h1>
-            </div>
+                    <div className={styles.logo}></div>
+                    <h1 className="text-xl font-bold text-purple-600">DAUPHINEPLANNER</h1>
+                </div>
     
                 {/* User Info */}
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center">
                         <span className="text-lg font-medium text-purple-700">
-                            U
+                            {user.username.charAt(0).toUpperCase()}
                         </span>
                     </div>
                     <div className="flex-1">
@@ -425,7 +427,7 @@ export default function Dashboard() {
                 </div>
     
                 {/* Nouveau projet */}
-                <div className="mb-6">
+                <form onSubmit={handleAddProject} className="mb-6">
                     <div className="relative">
                         <input
                             type="text"
@@ -433,16 +435,16 @@ export default function Dashboard() {
                             value={newProject.titre}
                             onChange={(e) => setNewProject({ titre: e.target.value })}
                             className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800"
+                            required
                         />
                         <button
-                            type="button"  // Ajoutez type="button"
-                            onClick={(e) => handleAddProject(e)}  // Passez l'événement
+                            type="submit"
                             className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
                         >
                             <Plus size={16} />
                         </button>
                     </div>
-                </div>
+                </form>
     
                 {/* Navigation des projets */}
                 <nav className="space-y-1 flex-1 overflow-y-auto">
@@ -455,45 +457,88 @@ export default function Dashboard() {
                                     : 'hover:bg-gray-50'
                             }`}
                         >
-                            <button
-                                onClick={() => {
-                                    setSelectedProject(project);
-                                    fetchTasks(project.id_projet);
-                                }}
-                                className="flex items-center gap-3 text-gray-700 flex-1"
-                            >
-                                {project.titre === "Ma journée" ? (
-                                    <Sun size={18} className="text-purple-600" />
-                                ) : project.titre === "Important" ? (
-                                    <Star size={18} className="text-purple-600" />
-                                ) : project.titre === "Deadline" ? (
-                                    <Calendar size={18} className="text-purple-600" />
-                                ) : (
-                                    <Folder size={18} className="text-purple-600" />
-                                )}
-                                <span>{project.titre}</span>
-                            </button>
-                            {!["Ma journée", "Important", "Deadline"].includes(project.titre) && (
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-                                    <button
-                                        onClick={() => setIsModalOpen(true)}
-                                        className="p-1 text-gray-400 hover:text-purple-600"
-                                    >
-                                        <Plus size={16} />
-                                    </button>
-                                    <button
-                                        onClick={() => setEditingProject(project.id_projet)}
-                                        className="p-1 text-gray-400 hover:text-purple-600"
-                                    >
+                            {editingProject === project.id_projet ? (
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateProject(project.id_projet, e.target.title.value);
+                                    }}
+                                    className="flex flex-1 items-center gap-2"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <input
+                                        name="title"
+                                        defaultValue={project.titre}
+                                        className="flex-1 px-3 py-1 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        autoFocus
+                                    />
+                                    <button type="submit" className="p-1 text-blue-600 hover:text-blue-700">
                                         <Edit size={16} />
                                     </button>
-                                    <button
-                                        onClick={() => deleteProject(project.id_projet)}
-                                        className="p-1 text-gray-400 hover:text-red-600"
+                                    <button 
+                                        type="button" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditingProject(null);
+                                        }}
+                                        className="p-1 text-gray-400 hover:text-gray-600"
                                     >
-                                        <Trash2 size={16} />
+                                        <X size={16} />
                                     </button>
-                                </div>
+                                </form>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            setSelectedProject(project);
+                                            fetchTasks(project.id_projet);
+                                        }}
+                                        className="flex items-center gap-3 text-gray-700 flex-1"
+                                    >
+                                        {project.titre === "Ma journée" ? (
+                                            <Sun size={18} className="text-purple-600" />
+                                        ) : project.titre === "Important" ? (
+                                            <Star size={18} className="text-purple-600" />
+                                        ) : project.titre === "Deadline" ? (
+                                            <Calendar size={18} className="text-purple-600" />
+                                        ) : (
+                                            <Folder size={18} className="text-purple-600" />
+                                        )}
+                                        <span>{project.titre}</span>
+                                    </button>
+                                    {!["Ma journée", "Important", "Deadline"].includes(project.titre) && (
+                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setIsModalOpen(true);
+                                                }}
+                                                className="p-1 text-gray-400 hover:text-purple-600"
+                                            >
+                                                <Plus size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setEditingProject(project.id_projet);
+                                                }}
+                                                className="p-1 text-gray-400 hover:text-purple-600"
+                                            >
+                                                <Edit size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    deleteProject(project.id_projet);
+                                                }}
+                                                className="p-1 text-gray-400 hover:text-red-600"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     ))}
@@ -648,5 +693,4 @@ export default function Dashboard() {
             )}
         </div>
     );
-    
 }
